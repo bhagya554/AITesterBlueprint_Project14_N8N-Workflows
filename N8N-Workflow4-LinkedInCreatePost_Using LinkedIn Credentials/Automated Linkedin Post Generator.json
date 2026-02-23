@@ -1,0 +1,480 @@
+{
+  "name": "Automated Linkedin Post Generator copy",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1408,
+        -384
+      ],
+      "id": "7559a57e-af7f-4777-b9ef-0c71fd26da74",
+      "name": "When chat message received",
+      "webhookId": "bceb3cc3-baeb-44a7-a9d2-d8de8f92102d"
+    },
+    {
+      "parameters": {
+        "content": "#Generate a Topic\n* Generates a Topic based on our prompt",
+        "height": 400,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1232,
+        -416
+      ],
+      "typeVersion": 1,
+      "id": "ca25d85c-5b3c-43fb-a58b-e4e30e920db8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        -160
+      ],
+      "id": "96b671a4-7e0c-490d-80db-e05e6fead92f",
+      "name": "Gemini Topic Generator",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IMjYJAbV0H4a7nc7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[{\n  \"title\": \"Will AI Replace Test Cases in 2026—or Will Testers Evolve Beyond Them?\",\n  \"hook\": \"Imagine a world where test cases are no longer written by humans but generated, executed, and healed by AI—what does that mean for your QA career?\",\n  \"rationale\": \"This topic is highly engaging because it combines a bold, slightly controversial question with a future-focused perspective. It resonates with QA engineers concerned about AI disruption while also opening discussion about evolution into strategic roles.\"\n}]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -928,
+        -160
+      ],
+      "id": "fed757a3-0b2b-4352-9903-ed64e8c139f6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a senior Software Testing Leader and AI Evangelist with 15+ years of experience in QA, Test Automation, and AI-driven quality engineering.\n\nYour task is to generate high-quality, engaging, and insightful LinkedIn post topics specifically focused on:\n\n\"Software Testing using AI in 2026\"\n\nInstructions:\n1. Generate 10–15 unique LinkedIn post topics.\n2. Topics should be:\n   - Thought-provoking\n   - Trend-driven (aligned with 2026 future predictions)\n   - Practical and relevant for QA engineers, SDETs, and Test Managers\n   - Mix of beginner-friendly + advanced perspectives\n3. Include different content angles:\n   - Future trends in AI testing\n   - Real-world use cases\n   - Challenges and limitations of AI in testing\n   - Comparison (Manual vs Automation vs AI Testing)\n   - Career growth and skills needed for QA in 2026\n   - Tools and frameworks powered by AI\n   - Shift-left and Shift-right with AI\n4. Each topic should:\n   - Be concise (1–2 lines max)\n   - Be written in a LinkedIn-friendly style\n   - Optionally include a hook (e.g., question, bold statement, or controversy)\n5. Avoid generic topics. Make them specific, actionable, and scroll-stopping.\n6. Ensure no repetition or overlapping ideas.\n\nOutput Format:\n- Numbered list\n- Each topic should be clearly written and ready to use for a LinkedIn post\n\nExample Style:\n1. \"Will AI Replace Testers in 2026? Or Make Them 10x More Powerful?\"\n2. \"From Selenium to Self-Healing AI Tests: The Evolution of QA\"",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1136,
+        -384
+      ],
+      "id": "32996e43-ed9d-4eb5-a45c-b3723b1d1e08",
+      "name": "Topic Generator AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior QA Leader, LinkedIn content creator, and copywriter with 15+ years of experience in Software Testing and AI-driven Quality Engineering.\n\nYou will receive multiple topics from a previous AI agent in the following JSON structure:\n{{ JSON.stringify($json.output) }}\n\nEach topic contains:\n- title: {{ $json.output[0].title }}\n- hook:{{ $json.output[0].hook }}\n- rationale: {{ $json.output[0].rationale }}\n\n-----------------------------------\nStep 1: Select the Best Topic\n-----------------------------------\nAnalyze ALL topics and select ONLY ONE topic that:\n- Has the highest demand and relevance for 2026 (AI in Software Testing)\n- Is most engaging and scroll-stopping\n- Has a strong hook (question, bold claim, or emotional trigger)\n- Resonates with QA Engineers, SDETs, and Test Leaders\n- Has potential to spark discussion on LinkedIn\n\n-----------------------------------\nStep 2: Create LinkedIn Post Content\n-----------------------------------\nUsing the selected topic:\n\n- Improve or refine the hook if needed\n- Write a high-quality LinkedIn post (150–300 words)\n- Keep it conversational, insightful, and future-focused\n- Add real-world relevance, trends, or strong opinions\n- Include a clear takeaway\n- End with an engaging question (CTA)\n\n-----------------------------------\nStep 3: Suggest Image\n-----------------------------------\n- Describe a visually appealing image idea for the post\n- The image should align with the topic and attract attention in the LinkedIn feed\n- Keep description concise but clear (suitable for AI image generation or design tools)\n\n-----------------------------------\nOutput Format (STRICT JSON)\n-----------------------------------\n{\n  \"selected_topic\": {\n    \"title\": \"string\",\n    \"hook\": \"string\",\n    \"rationale\": \"string\"\n  },\n  \"reason_for_selection\": \"string\",\n  \"linkedin_post\": \"string\",\n  \"image_suggestion\": \"string\"\n}\n\n-----------------------------------\nRules:\n-----------------------------------\n- Select ONLY ONE topic (do not return multiple)\n- Output ONLY valid JSON (no extra text)\n- Avoid generic or repetitive content\n- Ensure the post is engaging and LinkedIn-ready",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -720,
+        -384
+      ],
+      "id": "c787385f-c8c0-4189-9206-20927f694df8",
+      "name": "Content Generator AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "#Generate Content Based on Topic",
+        "height": 416,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -768,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "6994b34a-0540-426a-8dd2-44cee67bb171",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"post_title\": \"Will AI Replace Test Cases in 2026—or Redefine the Role of QA?\",\n  \"post_content\": \"🚀 Are we heading toward a future where QA engineers no longer write test cases?\\n\\nIn 2026, AI is not just assisting testing—it’s transforming it.\\n\\nImagine this:\\n• Test cases generated automatically from requirements\\n• Self-healing automation that fixes itself\\n• AI identifying risks before bugs even occur\\n\\nThis isn’t science fiction anymore.\\n\\nThe real shift?\\nQA engineers are moving from execution to strategy.\\n\\nInstead of asking *“Did we test this?”*, the question becomes:\\n👉 *“Are we testing the right things?”*\\n\\nThe future QA role will demand:\\n✔ Critical thinking over repetitive execution\\n✔ AI tool expertise over manual scripting\\n✔ Quality ownership over defect reporting\\n\\n💡 The takeaway: AI won’t replace testers—but testers who don’t adapt might be left behind.\\n\\nWhat’s your take?\\nWill AI elevate QA—or disrupt it completely?\\n\\n#SoftwareTesting #AIinTesting #QualityEngineering #FutureOfWork #TestAutomation\",\n  \"image_description\": \"A futuristic illustration of a QA engineer observing an AI-powered dashboard where automated test cases are being generated and executed in real time, with glowing UI elements, graphs, and self-healing indicators. The scene should feel modern, high-tech, and aligned with AI-driven software testing in 2026.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        -160
+      ],
+      "id": "e4ec2775-3921-4b97-81c3-e643c88f8838",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -160
+      ],
+      "id": "c8893bd6-f5cd-416c-b7af-2b939316f299",
+      "name": "Gemini Content Generator",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IMjYJAbV0H4a7nc7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1056,
+        -160
+      ],
+      "id": "5c2e90d2-6dd5-4e20-891a-6eb8d1d93d48",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "<__PLACEHOLDER_VALUE__bearer_your_stability_api_key__>"
+            },
+            {
+              "name": "Accept",
+              "value": "image/*"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.image_description }}"
+            },
+            {
+              "name": "model",
+              "value": "sd3.5-large"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "1:1"
+            },
+            {
+              "name": "output_format",
+              "value": "png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "30d7af0d-7a70-4da5-b2a0-a5bf98f314e6",
+      "name": "Generate Image with Stability AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -368,
+        -384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "D897VJzqR57XEig5",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "L5HKhdzZo6",
+        "text": "={{ $json.output.post_content }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -384
+      ],
+      "id": "df75dd95-64dc-4e8e-8d17-dde777eab3c5",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "Xur4PKYvmzo7ZJGz",
+          "name": "LinkedIn account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {
+    "Topic Generator AI Agent": [
+      {
+        "json": {
+          "output": [
+            {
+              "title": "From Scripts to Self-Healing: The 2026 AI Test Automation Evolution",
+              "hook": "Is your test automation strategy ready for what's coming?",
+              "rationale": "Exploring how AI will transform traditional test automation into intelligent, self-healing systems, enhancing efficiency and reducing maintenance."
+            },
+            {
+              "title": "Generative AI: Your New Test Case Co-Pilot by 2026?",
+              "hook": "Can AI design your tests better than you? The future is here.",
+              "rationale": "Delving into the revolutionary impact of Generative AI on automated test case generation and design, from requirements to execution."
+            },
+            {
+              "title": "The AI Test Orchestrator: Essential Skills for QA Leaders in 2026",
+              "hook": "What will it take to lead quality engineering teams in an AI-first world?",
+              "rationale": "Highlighting the critical new skills QA engineers and leaders will need to master to thrive as AI becomes central to testing."
+            },
+            {
+              "title": "Predictive Quality: How AI Spots Defects Before They're Even Coded",
+              "hook": "Imagine preventing critical bugs before they manifest. AI makes it possible.",
+              "rationale": "Discussing how AI-driven predictive analytics will enable earlier defect identification, shifting quality further left than ever before."
+            },
+            {
+              "title": "Ethical AI in Testing: Are Your Automated Tests Introducing Bias?",
+              "hook": "A crucial conversation for 2026: The unseen risks of AI-driven quality.",
+              "rationale": "Examining the ethical implications of AI in testing, focusing on how to detect and prevent AI from perpetuating or introducing system biases."
+            },
+            {
+              "title": "The True ROI of AI in QA: Beyond the Hype in 2026",
+              "hook": "What are the hidden costs and real returns on your AI testing investments?",
+              "rationale": "A pragmatic look at the financial considerations, challenges, and measurable benefits of implementing AI into your quality assurance strategy."
+            },
+            {
+              "title": "Visual Testing 2.0: AI-Powered Pixel Perfection Across All Platforms",
+              "hook": "Manual visual checks are a thing of the past. See what AI brings.",
+              "rationale": "Showcasing how advanced AI is revolutionizing visual testing, ensuring impeccable UI/UX consistency across diverse devices and resolutions."
+            },
+            {
+              "title": "Human-in-the-Loop for AI Testing: Why Intuition Remains Irreplaceable",
+              "hook": "Will AI replace human testers? Or make them indispensable?",
+              "rationale": "Exploring the synergistic relationship between human testers and AI, emphasizing where human expertise and critical thinking add unique value."
+            },
+            {
+              "title": "Shift-Right with AI: Autonomous Production Monitoring & Self-Healing Systems",
+              "hook": "Imagine production issues fixed before customers even notice. Is 2026 the year?",
+              "rationale": "Discussing how AI will extend quality efforts into production, enabling proactive monitoring, anomaly detection, and automated self-healing capabilities."
+            },
+            {
+              "title": "Prompt Engineering for Testers: Your New Superpower by 2026",
+              "hook": "Mastering communication with AI will define your testing career.",
+              "rationale": "Introducing prompt engineering as a core skill for SDETs and QA engineers to effectively leverage and control AI testing tools."
+            },
+            {
+              "title": "AI-Driven Test Data: Smarter, Faster, More Realistic Than Ever",
+              "hook": "Tired of manual test data creation? AI has the answer.",
+              "rationale": "Exploring how AI is transforming test data generation, providing realistic, diverse, and compliant data on demand, eliminating bottlenecks."
+            },
+            {
+              "title": "Low-Code/No-Code AI Testing Platforms: Hype or Future Standard for 2026?",
+              "hook": "Democratizing AI testing for all? Or a temporary trend?",
+              "rationale": "Analyzing the impact and future trajectory of low-code/no-code platforms in making AI-powered testing accessible to a broader audience."
+            },
+            {
+              "title": "Beyond Test Automation: Why Understanding ML is Non-Negotiable for QA Leaders",
+              "hook": "To lead quality in 2026, you need to speak the language of Machine Learning.",
+              "rationale": "Emphasizing the foundational knowledge of Machine Learning principles that QA leaders and managers will need to effectively guide AI testing initiatives."
+            },
+            {
+              "title": "The Unseen Frontier: AI's Revolution in API & Performance Testing",
+              "hook": "Uncover bottlenecks and vulnerabilities faster than ever before.",
+              "rationale": "Highlighting how AI is dramatically enhancing the efficiency and depth of API and performance testing, identifying complex issues with unprecedented speed."
+            },
+            {
+              "title": "The Manual Tester's Rebirth: Where Human Exploration Still Reigns in an AI World",
+              "hook": "Will AI make manual testing obsolete? A candid look at the evolving role.",
+              "rationale": "A nuanced discussion on the enduring value of human exploratory testing and critical thinking, even as AI automates routine tasks."
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Content Generator AI Agent": [
+      {
+        "json": {
+          "output": {
+            "post_title": "Predictive Quality: How AI Spots Defects Before They're Even Coded",
+            "post_content": "Imagine a world where critical bugs are flagged and even prevented *before* a single line of code is written. Sounds like science fiction? Not anymore. Welcome to the era of **Predictive Quality with AI**, and it's set to revolutionize our industry by 2026.\n\nWe've always strived for 'shift-left,' but AI is pushing that frontier further than we ever thought possible. Leveraging advanced machine learning, AI models can now analyze everything from requirements documents and architectural designs to historical defect patterns and developer check-ins. By identifying subtle correlations and potential risk areas, AI provides real-time insights, flagging high-risk components or complex interactions that are prone to defects *before* they manifest in code.\n\nThis isn't about replacing human intuition; it's about augmenting it with unparalleled analytical power. Think about the implications: significantly reduced rework, accelerated development cycles, and a substantial boost in overall software quality. It's a proactive, preventative approach that moves us beyond detection and into true defect prediction.\n\nAre we ready for this paradigm shift? The organizations that embrace AI for predictive quality will gain an undeniable competitive edge. This is more than automation; it's anticipation.\n\nWhat are your thoughts? Is your team exploring predictive AI for quality, or do you foresee significant hurdles in adoption?",
+            "image_description": "A futuristic, abstract image depicting a digital brain or a network of interconnected data points, with a 'magnifying glass' effect highlighting an anomaly or a green 'shield' icon. The background could have flowing lines of code or architectural blueprints, signifying early detection. Colors should be vibrant and convey intelligence and foresight."
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Generate Image with Stability AI": [
+      {
+        "json": {
+          "output": {
+            "post_title": "Predictive Quality: How AI Spots Defects Before They're Even Coded",
+            "post_content": "Imagine a world where critical bugs are flagged and even prevented *before* a single line of code is written. Sounds like science fiction? Not anymore. Welcome to the era of **Predictive Quality with AI**, and it's set to revolutionize our industry by 2026.\n\nWe've always strived for 'shift-left,' but AI is pushing that frontier further than we ever thought possible. Leveraging advanced machine learning, AI models can now analyze everything from requirements documents and architectural designs to historical defect patterns and developer check-ins. By identifying subtle correlations and potential risk areas, AI provides real-time insights, flagging high-risk components or complex interactions that are prone to defects *before* they manifest in code.\n\nThis isn't about replacing human intuition; it's about augmenting it with unparalleled analytical power. Think about the implications: significantly reduced rework, accelerated development cycles, and a substantial boost in overall software quality. It's a proactive, preventative approach that moves us beyond detection and into true defect prediction.\n\nAre we ready for this paradigm shift? The organizations that embrace AI for predictive quality will gain an undeniable competitive edge. This is more than automation; it's anticipation.\n\nWhat are your thoughts? Is your team exploring predictive AI for quality, or do you foresee significant hurdles in adoption?",
+            "image_description": "A futuristic, abstract image depicting a digital brain or a network of interconnected data points, with a 'magnifying glass' effect highlighting an anomaly or a green 'shield' icon. The background could have flowing lines of code or architectural blueprints, signifying early detection. Colors should be vibrant and convey intelligence and foresight."
+          }
+        },
+        "binary": {
+          "data": {
+            "mimeType": "image/png",
+            "fileType": "image",
+            "fileExtension": "png",
+            "data": "filesystem-v2",
+            "directory": "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+            "fileName": "sd3",
+            "id": "filesystem-v2:workflows/jdjTXCrfsJImrd4m/executions/67/binary_data/80ad2441-b704-4928-aee7-59c1df874726",
+            "fileSize": "1.66 MB",
+            "bytes": 1664359
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Topic Generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Generator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Content Generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Generator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Image with Stability AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image with Stability AI": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7a7f5664-a388-48c8-95fa-da3b12c584e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd567995b2448f55efc924713f6e72624dd0ae77c8e9fddbe251a6ef565d7880"
+  },
+  "id": "jdjTXCrfsJImrd4m",
+  "tags": []
+}
