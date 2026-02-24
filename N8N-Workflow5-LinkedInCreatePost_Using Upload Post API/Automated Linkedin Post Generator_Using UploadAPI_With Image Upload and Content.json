@@ -1,0 +1,675 @@
+{
+  "name": "Automated Linkedin Post Generator_Using UploadAPI_With Image Upload and Content",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -608,
+        -32
+      ],
+      "id": "1008ade8-b66a-4c69-85f9-6d47f19ea4ba",
+      "name": "When chat message received",
+      "webhookId": "14af0f73-5771-4bd2-bfcb-1eee898ee6ba"
+    },
+    {
+      "parameters": {
+        "content": "#Generate a Topic\n* Generates a Topic based on our prompt",
+        "height": 400,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -432,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "cea0c98b-2b98-4ab0-b02e-c45f2aa26e1e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        192
+      ],
+      "id": "38ea63d3-318e-43e5-9b57-8f1805cbd65f",
+      "name": "Gemini Topic Generator",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IMjYJAbV0H4a7nc7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[{\n  \"title\": \"Will AI Replace Test Cases in 2026—or Will Testers Evolve Beyond Them?\",\n  \"hook\": \"Imagine a world where test cases are no longer written by humans but generated, executed, and healed by AI—what does that mean for your QA career?\",\n  \"rationale\": \"This topic is highly engaging because it combines a bold, slightly controversial question with a future-focused perspective. It resonates with QA engineers concerned about AI disruption while also opening discussion about evolution into strategic roles.\"\n}]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        192
+      ],
+      "id": "e8d42ad7-cfb6-4216-8181-ff0879c39b38",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a senior Software Testing Leader and AI Evangelist with 15+ years of experience in QA, Test Automation, and AI-driven quality engineering.\n\nYour task is to generate high-quality, engaging, and insightful LinkedIn post topics specifically focused on:\n\n\"Software Testing using AI in 2026\"\n\nInstructions:\n1. Generate 10–15 unique LinkedIn post topics.\n2. Topics should be:\n   - Thought-provoking\n   - Trend-driven (aligned with 2026 future predictions)\n   - Practical and relevant for QA engineers, SDETs, and Test Managers\n   - Mix of beginner-friendly + advanced perspectives\n3. Include different content angles:\n   - Future trends in AI testing\n   - Real-world use cases\n   - Challenges and limitations of AI in testing\n   - Comparison (Manual vs Automation vs AI Testing)\n   - Career growth and skills needed for QA in 2026\n   - Tools and frameworks powered by AI\n   - Shift-left and Shift-right with AI\n4. Each topic should:\n   - Be concise (1–2 lines max)\n   - Be written in a LinkedIn-friendly style\n   - Optionally include a hook (e.g., question, bold statement, or controversy)\n5. Avoid generic topics. Make them specific, actionable, and scroll-stopping.\n6. Ensure no repetition or overlapping ideas.\n\nOutput Format:\n- Numbered list\n- Each topic should be clearly written and ready to use for a LinkedIn post\n\nExample Style:\n1. \"Will AI Replace Testers in 2026? Or Make Them 10x More Powerful?\"\n2. \"From Selenium to Self-Healing AI Tests: The Evolution of QA\"",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -336,
+        -32
+      ],
+      "id": "f34d6fe7-4ddc-4beb-8a34-a60e5cd161f4",
+      "name": "Topic Generator AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior QA Leader, LinkedIn content creator, and copywriter with 15+ years of experience in Software Testing and AI-driven Quality Engineering.\n\nYou will receive multiple topics from a previous AI agent in the following JSON structure:\n{{ JSON.stringify($json.output) }}\n\nEach topic contains:\n- title: {{ $json.output[0].title }}\n- hook:{{ $json.output[0].hook }}\n- rationale: {{ $json.output[0].rationale }}\n\n-----------------------------------\nStep 1: Select the Best Topic\n-----------------------------------\nAnalyze ALL topics and select ONLY ONE topic that:\n- Has the highest demand and relevance for 2026 (AI in Software Testing)\n- Is most engaging and scroll-stopping\n- Has a strong hook (question, bold claim, or emotional trigger)\n- Resonates with QA Engineers, SDETs, and Test Leaders\n- Has potential to spark discussion on LinkedIn\n\n-----------------------------------\nStep 2: Create LinkedIn Post Content\n-----------------------------------\nUsing the selected topic:\n\n- Improve or refine the hook if needed\n- Write a high-quality LinkedIn post (150–300 words)\n- Keep it conversational, insightful, and future-focused\n- Add real-world relevance, trends, or strong opinions\n- Include a clear takeaway\n- End with an engaging question (CTA)\n\n-----------------------------------\nStep 3: Suggest Image\n-----------------------------------\n- Describe a visually appealing image idea for the post\n- The image should align with the topic and attract attention in the LinkedIn feed\n- Keep description concise but clear (suitable for AI image generation or design tools)\n\n-----------------------------------\nOutput Format (STRICT JSON)\n-----------------------------------\n{\n  \"selected_topic\": {\n    \"title\": \"string\",\n    \"hook\": \"string\",\n    \"rationale\": \"string\"\n  },\n  \"reason_for_selection\": \"string\",\n  \"linkedin_post\": \"string\",\n  \"image_suggestion\": \"string\"\n}\n\n-----------------------------------\nRules:\n-----------------------------------\n- Select ONLY ONE topic (do not return multiple)\n- Output ONLY valid JSON (no extra text)\n- Avoid generic or repetitive content\n- Ensure the post is engaging and LinkedIn-ready",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        -32
+      ],
+      "id": "726427d1-3bc8-48f0-a6f8-faa24188d0e7",
+      "name": "Content Generator AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "#Generate Content Based on Topic",
+        "height": 416,
+        "width": 356
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "eb9f1699-9232-4ec4-a673-d7340907f53e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"post_title\": \"Will AI Replace Test Cases in 2026—or Redefine the Role of QA?\",\n  \"post_content\": \"🚀 Are we heading toward a future where QA engineers no longer write test cases?\\n\\nIn 2026, AI is not just assisting testing—it’s transforming it.\\n\\nImagine this:\\n• Test cases generated automatically from requirements\\n• Self-healing automation that fixes itself\\n• AI identifying risks before bugs even occur\\n\\nThis isn’t science fiction anymore.\\n\\nThe real shift?\\nQA engineers are moving from execution to strategy.\\n\\nInstead of asking *“Did we test this?”*, the question becomes:\\n👉 *“Are we testing the right things?”*\\n\\nThe future QA role will demand:\\n✔ Critical thinking over repetitive execution\\n✔ AI tool expertise over manual scripting\\n✔ Quality ownership over defect reporting\\n\\n💡 The takeaway: AI won’t replace testers—but testers who don’t adapt might be left behind.\\n\\nWhat’s your take?\\nWill AI elevate QA—or disrupt it completely?\\n\\n#SoftwareTesting #AIinTesting #QualityEngineering #FutureOfWork #TestAutomation\",\n  \"image_description\": \"A futuristic illustration of a QA engineer observing an AI-powered dashboard where automated test cases are being generated and executed in real time, with glowing UI elements, graphs, and self-healing indicators. The scene should feel modern, high-tech, and aligned with AI-driven software testing in 2026.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        192
+      ],
+      "id": "8f34227a-6985-44f7-8bc5-e9d2075a6ed5",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        192
+      ],
+      "id": "4bf35dce-ff85-4b31-b1e5-d9af580a3245",
+      "name": "Gemini Content Generator",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IMjYJAbV0H4a7nc7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        192
+      ],
+      "id": "96cd5029-5aa3-4e24-9e81-a7f96ce3ca51",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "user": "bhagya45",
+        "platform": [
+          "linkedin",
+          "x"
+        ],
+        "title": "={{ $('Content Generator AI Agent').item.json.output.post_title }}",
+        "linkedinTitle": "={{ $('Content Generator AI Agent').item.json.output.post_title }}",
+        "xTitle": "={{ $('Content Generator AI Agent').item.json.output.post_title }}",
+        "description": "={{ $('Content Generator AI Agent').item.json.output.post_content }}",
+        "linkedinDescription": "={{ $('Content Generator AI Agent').item.json.output.post_content }}",
+        "photos": "={{ $json.webContentLink }}",
+        "targetLinkedinPageId": "urn:li:organization:112427612"
+      },
+      "type": "n8n-nodes-upload-post.uploadPost",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -32
+      ],
+      "id": "bc01b5cb-5bf2-460e-b307-2927a43197b8",
+      "name": "Upload photos",
+      "credentials": {
+        "uploadPostApi": {
+          "id": "L0zOJFsJGtsrLoJl",
+          "name": "Upload Post account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-573NBGbN5WqI8e1pYPGzQgK3WAM7ehZeh4qfywojoCt9Q0KN"
+            },
+            {
+              "name": "Accept",
+              "value": "image/*"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.image_description }}"
+            },
+            {
+              "name": "model",
+              "value": "sd3.5-large"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "1:1"
+            },
+            {
+              "name": "output_format",
+              "value": "png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        -48
+      ],
+      "id": "86483920-5567-44bd-bf2d-eb606f0cb88a",
+      "name": "Generate Image Using Stability AI",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XZdMvR3Io6567zFQ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "AI_Image",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "173-UZ_Ef1s2pvMSeskFbppmmbzDzWhlM",
+          "mode": "list",
+          "cachedResultName": "AITesterBlueprint_2026",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/173-UZ_Ef1s2pvMSeskFbppmmbzDzWhlM"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        592,
+        -224
+      ],
+      "id": "e19f2a21-fa91-429c-91a8-0f91f318f624",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "T7N1uSLEPcgCkxh5",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Topic Generator AI Agent": [
+      {
+        "json": {
+          "output": [
+            {
+              "title": "Is your test automation ready for AI in 2026? The rise of autonomous testing agents is here.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Beyond Test Cases: How Generative AI will revolutionize test scenario creation by 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "The QA Engineer's New Superpower: Mastering prompt engineering for AI-driven testing.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "AI for Predictive Defects: Shifting left like never before by anticipating bugs before they even emerge in 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Ethical AI in Testing: Ensuring fairness, transparency, and explainability in our quality strategies.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "From Flaky Tests to Self-Healing Systems: How AI is building resilient test suites for complex applications.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Real-World ROI of AI Testing: Practical use cases that justify the investment and deliver measurable quality in 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "The Human Element in AI QA: Why critical thinking and domain expertise will remain irreplaceable by 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "AI-Powered Visual Testing: Eliminating UI regressions with intelligent image recognition and anomaly detection.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Upskilling for 2026: What data science and machine learning skills every QA professional needs to thrive.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Navigating the Hype: Practical challenges and limitations of implementing AI in your test strategy by 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Shift-Right with AI: Leveraging AI for intelligent monitoring and proactive quality in production environments.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Beyond Automation: The Rise of Cognitive Testing. How AI interprets user behavior to uncover deeper insights.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "Demystifying AI Testing Tools: A guide to the essential platforms and frameworks shaping QA in 2026.",
+              "hook": "",
+              "rationale": ""
+            },
+            {
+              "title": "The Future of Test Data: How AI generates synthetic, realistic, and privacy-compliant data for complex scenarios.",
+              "hook": "",
+              "rationale": ""
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Content Generator AI Agent": [
+      {
+        "json": {
+          "output": {
+            "post_title": "Navigating the Hype: Practical challenges and limitations of implementing AI in your test strategy by 2026.",
+            "post_content": "The AI in Testing revolution is undeniable, but let's be honest: are we *really* prepared for its practical challenges?\n\nEvery day, we hear about the transformative power of AI in Quality Engineering – autonomous agents, predictive analytics, self-healing tests. The hype is intoxicating, promising to solve all our quality woes by 2026. But as a leader with 15+ years in the trenches, I’ve learned that innovation always comes with its own set of practical realities.\n\nWe're all excited, but beneath the shiny surface, many teams are grappling with fundamental hurdles:\n*   **Data Quality & Volume:** AI thrives on data. Do we have enough, and is it clean, diverse, and representative to train effective models?\n*   **Integration Complexity:** Fitting new AI tools into existing, often fragmented, test ecosystems is no small feat.\n*   **Expertise Gap:** Who on our teams truly understands ML Ops, prompt engineering, or model interpretability?\n*   **False Positives & Trust:** How do we build confidence in AI's recommendations when it occasionally gets it wrong?\n*   **Measuring True ROI:** Beyond the qualitative benefits, how do we quantitatively prove the investment in AI testing pays off?\n\nAI isn't a magic wand; it's a powerful accelerant. But for it to deliver, we must move beyond the hype and address the foundational elements: solid data strategies, upskilling our teams, and focusing on realistic, incremental implementations. The real quality revolution isn't just about *having* AI, but about *wisely implementing* it.\n\nThe path to AI-driven quality in 2026 demands a pragmatic approach, focusing on foundational readiness and addressing real-world limitations. \n\nWhat's the BIGGEST practical challenge you've faced or anticipate with implementing AI in your test strategy? Let's discuss!",
+            "image_description": "An abstract image of a winding, intricate maze or complex neural network, with some paths brightly lit and others shrouded in shadow, and a single, clear spotlight highlighting a direct, pragmatic path forward. Incorporate subtle AI symbols or glowing data points."
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Generate Image Using Stability AI": [
+      {
+        "json": {
+          "output": {
+            "post_title": "Navigating the Hype: Practical challenges and limitations of implementing AI in your test strategy by 2026.",
+            "post_content": "The AI in Testing revolution is undeniable, but let's be honest: are we *really* prepared for its practical challenges?\n\nEvery day, we hear about the transformative power of AI in Quality Engineering – autonomous agents, predictive analytics, self-healing tests. The hype is intoxicating, promising to solve all our quality woes by 2026. But as a leader with 15+ years in the trenches, I’ve learned that innovation always comes with its own set of practical realities.\n\nWe're all excited, but beneath the shiny surface, many teams are grappling with fundamental hurdles:\n*   **Data Quality & Volume:** AI thrives on data. Do we have enough, and is it clean, diverse, and representative to train effective models?\n*   **Integration Complexity:** Fitting new AI tools into existing, often fragmented, test ecosystems is no small feat.\n*   **Expertise Gap:** Who on our teams truly understands ML Ops, prompt engineering, or model interpretability?\n*   **False Positives & Trust:** How do we build confidence in AI's recommendations when it occasionally gets it wrong?\n*   **Measuring True ROI:** Beyond the qualitative benefits, how do we quantitatively prove the investment in AI testing pays off?\n\nAI isn't a magic wand; it's a powerful accelerant. But for it to deliver, we must move beyond the hype and address the foundational elements: solid data strategies, upskilling our teams, and focusing on realistic, incremental implementations. The real quality revolution isn't just about *having* AI, but about *wisely implementing* it.\n\nThe path to AI-driven quality in 2026 demands a pragmatic approach, focusing on foundational readiness and addressing real-world limitations. \n\nWhat's the BIGGEST practical challenge you've faced or anticipate with implementing AI in your test strategy? Let's discuss!",
+            "image_description": "An abstract image of a winding, intricate maze or complex neural network, with some paths brightly lit and others shrouded in shadow, and a single, clear spotlight highlighting a direct, pragmatic path forward. Incorporate subtle AI symbols or glowing data points."
+          }
+        },
+        "binary": {
+          "data": {
+            "mimeType": "image/png",
+            "fileType": "image",
+            "fileExtension": "png",
+            "data": "filesystem-v2",
+            "directory": "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+            "fileName": "sd3",
+            "id": "filesystem-v2:workflows/Gc0XiWOywoYsPLnh/executions/116/binary_data/d98eecfe-4b81-4f8b-941e-9c4a3f9cd1c5",
+            "fileSize": "1.76 MB",
+            "bytes": 1757828
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Upload file": [
+      {
+        "json": {
+          "kind": "drive#file",
+          "id": "1h_zLWNuc2KdCbvJXudC3kWwkKJQe5j5x",
+          "name": "AI_Image",
+          "mimeType": "image/png",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "parents": [
+            "173-UZ_Ef1s2pvMSeskFbppmmbzDzWhlM"
+          ],
+          "spaces": [
+            "drive"
+          ],
+          "version": "2",
+          "webContentLink": "https://drive.google.com/uc?id=1h_zLWNuc2KdCbvJXudC3kWwkKJQe5j5x&export=download",
+          "webViewLink": "https://drive.google.com/file/d/1h_zLWNuc2KdCbvJXudC3kWwkKJQe5j5x/view?usp=drivesdk",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/image/png",
+          "hasThumbnail": true,
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBO7fwPYRBscgCo2IwxVIfCOUyqsu0VOegMIXKFb8VQd7m1W6_9TXJn_hVTDII8pzx6woX0Krg6VgtHIo1Tyf9UzAyRVw9OKZUvTnnkE6ZHB1PA=s220",
+          "thumbnailVersion": "1",
+          "viewedByMe": false,
+          "createdTime": "2026-02-24T01:23:07.382Z",
+          "modifiedTime": "2026-02-24T01:23:08.651Z",
+          "modifiedByMeTime": "2026-02-24T01:23:08.651Z",
+          "modifiedByMe": true,
+          "owners": [
+            {
+              "kind": "drive#user",
+              "displayName": "bhagya kudupudi",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJwud4LYPpx7-6TWD6ibctgUTsr-GhwVEoASSxSYLJBGr0Ph5Q=s64",
+              "me": true,
+              "permissionId": "16774258047261067321",
+              "emailAddress": "kudupudi.bhagya@gmail.com"
+            }
+          ],
+          "lastModifyingUser": {
+            "kind": "drive#user",
+            "displayName": "bhagya kudupudi",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJwud4LYPpx7-6TWD6ibctgUTsr-GhwVEoASSxSYLJBGr0Ph5Q=s64",
+            "me": true,
+            "permissionId": "16774258047261067321",
+            "emailAddress": "kudupudi.bhagya@gmail.com"
+          },
+          "shared": true,
+          "ownedByMe": true,
+          "downloadRestrictions": {
+            "itemDownloadRestriction": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            },
+            "effectiveDownloadRestrictionWithContext": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            }
+          },
+          "capabilities": {
+            "canAcceptOwnership": false,
+            "canAddChildren": false,
+            "canAddMyDriveParent": false,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canChangeItemDownloadRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canChangeViewersCanCopyContent": true,
+            "canComment": true,
+            "canCopy": true,
+            "canDelete": true,
+            "canDisableInheritedPermissions": false,
+            "canDownload": true,
+            "canEdit": true,
+            "canEnableInheritedPermissions": true,
+            "canListChildren": false,
+            "canModifyContent": true,
+            "canModifyContentRestriction": true,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canModifyLabels": false,
+            "canMoveChildrenWithinDrive": false,
+            "canMoveItemIntoTeamDrive": true,
+            "canMoveItemOutOfDrive": true,
+            "canMoveItemWithinDrive": true,
+            "canReadLabels": false,
+            "canReadRevisions": true,
+            "canRemoveChildren": false,
+            "canRemoveContentRestriction": false,
+            "canRemoveMyDriveParent": true,
+            "canRename": true,
+            "canShare": true,
+            "canTrash": true,
+            "canUntrash": true
+          },
+          "viewersCanCopyContent": true,
+          "copyRequiresWriterPermission": false,
+          "writersCanShare": true,
+          "permissions": [
+            {
+              "kind": "drive#permission",
+              "id": "anyoneWithLink",
+              "type": "anyone",
+              "role": "writer",
+              "allowFileDiscovery": false
+            },
+            {
+              "kind": "drive#permission",
+              "id": "16774258047261067321",
+              "type": "user",
+              "emailAddress": "kudupudi.bhagya@gmail.com",
+              "role": "owner",
+              "displayName": "kudupudi.bhagya",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "permissionIds": [
+            "anyoneWithLink",
+            "16774258047261067321"
+          ],
+          "originalFilename": "AI_Image",
+          "fullFileExtension": "",
+          "fileExtension": "",
+          "md5Checksum": "fbef46f6beab0cff63b938e5e401c72a",
+          "sha1Checksum": "1da25a29257b00c510bba9bb29a678f15fcbd209",
+          "sha256Checksum": "a418e086a62f2d94c38ad60583485a0a1f6d3102cc7cc2943582c6f9613e9f61",
+          "size": "1757828",
+          "quotaBytesUsed": "1757828",
+          "headRevisionId": "0B-weJVb-_mKZTUR6aThtT3d6SnUzVFFnYWw4bklVS09ZSFBnPQ",
+          "imageMediaMetadata": {
+            "width": 1024,
+            "height": 1024,
+            "rotation": 0
+          },
+          "isAppAuthorized": true,
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "inheritedPermissionsDisabled": false
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Topic Generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Generator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Content Generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Generator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Topic Generator AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Generator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Using Stability AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Using Stability AI": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Upload photos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "49782454-4aa1-42c5-88fe-87e458a8a035",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd567995b2448f55efc924713f6e72624dd0ae77c8e9fddbe251a6ef565d7880"
+  },
+  "id": "Gc0XiWOywoYsPLnh",
+  "tags": []
+}
